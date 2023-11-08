@@ -36,7 +36,7 @@ def extract_text_from_pdf(pdf_file):
             page = pdf_reader.pages[page_num]
             page_text = page.extract_text()
             page_text = clean_line(page_text)
-            text += page_text.replace('\n', ' ') + '\n\n'
+            text += page_text.replace('\n', ' ') + '\n'
             # text += page.extract_text()
     return text
 

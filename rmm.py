@@ -8,7 +8,7 @@ from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lsa import LsaSummarizer
 
-def summarize(text, language="english", sentences_count=3):
+def summarize(text, language="english", sentences_count=5):
     parser = PlaintextParser.from_string(text, Tokenizer(language))
     summarizer = LsaSummarizer()
     summary = summarizer(parser.document, sentences_count)
@@ -19,7 +19,7 @@ def clean_line(line):
     return str_clean
 
 def extract_specific_keywords(line):
-    keywords = ["machine learning", "model", "supervised"]
+    keywords = ["machine learning", "model", "supervised", "healthcare", "experiment"]
     line = line.lower()
 
     found_keywords = [keyword for keyword in keywords if keyword in line]
@@ -32,7 +32,7 @@ def create_mind_map(text_file, output_file):
     with open(text_file, "r") as file:
         lines = file.readlines()
         for line in lines:
-            line = line.strip()
+            # line = line.strip(line)
             line = summarize(line)
             line = clean_line(line)
             keywords = extract_specific_keywords(line)
@@ -61,6 +61,6 @@ def create_mind_map(text_file, output_file):
         output.write("</map>\n")
 
 if __name__ == "__main__":
-    text_file = "mm/ml.txt"  # Replace with your text file's path
-    output_file = "mm/ml.mm"  # Output .mm file
+    text_file = "out.txt"  # Replace with your text file's path
+    output_file = "ml.mm"  # Output .mm file
     create_mind_map(text_file, output_file)

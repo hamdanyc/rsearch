@@ -19,7 +19,7 @@ def clean_line(line):
     return str_clean
 
 def extract_specific_keywords(line):
-    keywords = ["machine learning", "model", "supervised"]
+    keywords = ["machine learning", "model", "supervised", "healthcare", "health"]
     line = line.lower()
 
     found_keywords = [keyword for keyword in keywords if keyword in line]
@@ -49,22 +49,22 @@ def create_mind_map(txt_folder, mm_folder):
                             keyword_nodes[keyword] = set()
                         keyword_nodes[keyword].add(line)
 
-        with open(output_file, "w") as output:
-            output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
-            output.write("<map version=\"1.0.1\">\n")
+            with open(output_file, "w") as output:
+                output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+                output.write("<map version=\"1.0.1\">\n")
 
-            # Create a main node for the topic
-            output.write("  <node TEXT=\"topic\">\n")
+                # Create a main node for the topic
+                output.write("  <node TEXT=\"topic\">\n")
 
-            for keyword, subnodes in keyword_nodes.items():
-                # Create a subnode for each keyword
-                output.write(f"    <node TEXT=\"{keyword}\">\n")
-                for subnode in subnodes:
-                    output.write(f"      <node TEXT=\"{subnode}\" />\n")
-                output.write("    </node>\n")
+                for keyword, subnodes in keyword_nodes.items():
+                    # Create a subnode for each keyword
+                    output.write(f"    <node TEXT=\"{keyword}\">\n")
+                    for subnode in subnodes:
+                        output.write(f"      <node TEXT=\"{subnode}\" />\n")
+                    output.write("    </node>\n")
 
-            output.write("  </node>\n")
-            output.write("</map>\n")
+                output.write("  </node>\n")
+                output.write("</map>\n")
 
 if __name__ == "__main__":
     txt_folder = "txt"  # Folder containing txt files
