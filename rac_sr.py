@@ -4,20 +4,20 @@ from PyPDF2 import PdfReader
 from tqdm import tqdm
 
 # Keywords to search for
-keywords = ["machine learning", "model", "algorithm", "healthcare", "supervise", "unsupervise"]
+keywords = ["machine learning", "model", "algorithm", "healthcare"]
 
 # Folder containing PDF files
 pdf_folder = "pdf"
 
 # Categories and their corresponding criteria
 categories = {
-    "high": lambda x: x > 79,
-    "medium": lambda x: 50 < x < 80,
+    "high": lambda x: x > 100,
+    "medium": lambda x: 50 < x < 100,
     "low": lambda x: x < 50,
 }
 
-# Initialize a dictionary to store articles and their keyword counts
-article_categories = {}
+# Initialize a list to store articles and their keyword counts
+article_data = []
 
 # Function to count keywords in a given text
 def count_keywords(text):
@@ -52,11 +52,17 @@ with tqdm(total=len(pdf_files), unit="file") as pbar:
                 category = cat
                 break
 
-        article_categories[pdf_file] = category
+        article_data.append({"Article": pdf_file, "Keyword Count": keyword_count, "Category": category})
         pbar.update(1)  # Update the progress bar
 
+# Sort the articles by category and keyword count
+# x = {1: 2, 3: 4, 4: 3, 2: 1, 0: 0}
+# dict(sorted(x.items(), key=lambda item: item[1])) -> {0: 0, 2: 1, 1: 2, 4: 3, 3: 4}
+# sorted_articles = sorted(article_data, key=lambda x: (categories[x["Category"]], -x["Keyword Count"], x["Article"]), reverse=True)
+sorted_articles = sorted(article_data, key=lambda x: x["Keyword Count"], reverse=True)
+
 # Print the report in a table format
-print(f"{'Article':<40}{'Category':<15}")
-print('-' * 50)
-for article, category in article_categories.items():
-    print(f"{article:<40} -> {category:<15}")
+print(f"{'Article':<40}{'Keyword Count':<15}{'Category':<10}")
+print('-' * 65)
+for article_info in sorted_articles:
+    print(f"{article_info['Article']:<40} ({article_info['Keyword Count']:<3}) -> {article_info['Category']:<10}")
