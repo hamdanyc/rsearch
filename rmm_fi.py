@@ -27,11 +27,11 @@ def extract_specific_keywords(line):
     return found_keywords
 
 def create_mind_map(txt_folder, mm_folder):
-    keyword_nodes = {}
 
     files = [f for f in os.listdir(txt_folder) if f.endswith('.txt')]
 
     for file in files:
+        keyword_nodes = {}
         text_file = os.path.join(txt_folder, file)
         output_file = os.path.join(mm_folder, f"{file.replace('.txt', '.mm')}")
 
