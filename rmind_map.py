@@ -16,7 +16,7 @@ def create_node(keyword, text):
     return node
 
 # Load the text file
-with open("intro.txt", "r") as f:
+with open("mm/intro.txt", "r") as f:
     text = f.read()
 
 # Extract keywords and their corresponding text
