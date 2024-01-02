@@ -1,0 +1,1 @@
+{'nodes': [{'name': 'machine learning', 'subnodes': [{'name': 'machine learning', 'color': 'lightblue'}]}, {'name': 'model', 'subnodes': [{'name': 'model', 'color': 'lightblue'}]}, {'name': 'model', 'subnodes': [{'name': 'model', 'color': 'lightblue'}]}, {'name': 'model', 'subnodes': [{'name': 'model', 'color': 'lightblue'}]}]}
