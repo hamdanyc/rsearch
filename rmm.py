@@ -61,6 +61,6 @@ def create_mind_map(text_file, output_file):
         output.write("</map>\n")
 
 if __name__ == "__main__":
-    text_file = "out.txt"  # Replace with your text file's path
+    text_file = "/workspaces/rsearch/mm/intro.txt"  # Replace with your text file's path
     output_file = "ml.mm"  # Output .mm file
     create_mind_map(text_file, output_file)
