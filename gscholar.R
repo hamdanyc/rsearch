@@ -20,9 +20,14 @@ remDr$open()
 # Navigate to Google Scholar----
 remDr$navigate("https://scholar.google.com/")
 
-# Find and interact with elements on the page
+# Find and interact with elements on the page ----
 search_box <-  remDr$findElement(using = "xpath", value = '//input[@name = "q"]')
 search_box$sendKeysToElement(list('fine tune llm', key='enter'))
+search_yr <- remDr$findElement(using = "css", value = ".gs_res_ab_dd_sec > a:nth-child(3)") # div.gs_res_ab_dd_sec > a:nth-child(2)
+url <- search_yr$getElementAttribute("href")
+
+# base_url <- "https://scholar.google.com"
+# url <- paste0(base_url, url_sel)
 
 get_titles <- function(url) {
     # Navigate to Google Scholar
@@ -76,8 +81,8 @@ get_bib <- function(url) {
 
 # loop to get more titles ----
 i <- 0
-url <- remDr$getCurrentUrl()
-url_next <- paste0("https://scholar.google.com/scholar?start=",i*10,"&q=fine+tuning+language+models&hl=en&as_sdt=0,5&as_ylo=2024")
+
+# url_next <- paste0("https://scholar.google.com/scholar?start=",i*10,"&q=fine+tuning+language+models&hl=en&as_sdt=0,5&as_ylo=2024")
 title_lst <- unlist(lapply(i[0:3], function(x) get_titles(url)))
 pdf_lst <- unlist(lapply(i[0:3], function(x) get_pdf(url)))
 bib_lst <- unlist(lapply(i[0:3], function(x) get_bib(url)))
