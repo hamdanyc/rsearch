@@ -17,6 +17,13 @@ remDr$open()
 #     x$getElementText()
 # }))
 
+# Navigate to Google Scholar----
+remDr$navigate("https://scholar.google.com/")
+
+# Find and interact with elements on the page
+search_box <-  remDr$findElement(using = "xpath", value = '//input[@name = "q"]')
+search_box$sendKeysToElement(list('fine tune llm', key='enter'))
+
 get_titles <- function(url) {
     # Navigate to Google Scholar
     Sys.sleep(5)
@@ -69,10 +76,11 @@ get_bib <- function(url) {
 
 # loop to get more titles ----
 i <- 0
+url <- remDr$getCurrentUrl()
 url_next <- paste0("https://scholar.google.com/scholar?start=",i*10,"&q=fine+tuning+language+models&hl=en&as_sdt=0,5&as_ylo=2024")
-title_lst <- unlist(lapply(i[0:3], function(x) get_titles(url_next)))
-pdf_lst <- unlist(lapply(i[0:3], function(x) get_pdf(url_next)))
-bib_lst <- unlist(lapply(i[0:3], function(x) get_bib(url_next)))
+title_lst <- unlist(lapply(i[0:3], function(x) get_titles(url)))
+pdf_lst <- unlist(lapply(i[0:3], function(x) get_pdf(url)))
+bib_lst <- unlist(lapply(i[0:3], function(x) get_bib(url)))
 
 # save data ----
-save.image("harvest")
+save.image("harvest.RData")
