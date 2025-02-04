@@ -2,41 +2,34 @@
 
 library(RSelenium)
 
-# server rselenium ----
-remDr <- RSelenium::remoteDriver(remoteServerAddr = "192.168.1.116",
+# Run server rselenium ----
+remDr <- RSelenium::remoteDriver(remoteServerAddr = "172.17.0.3",
                                  port = 4444L,
                                  browserName = "firefox")
 remDr$open()
 
-# url <- "https://scholar.google.com/scholar?as_ylo=2024&q=fine+tuning+language+models&hl=en&as_sdt=0,5"
-# # Navigate to Google Scholar
-# remDr$navigate(url)
-# 
-# title <- remDr$findElements(using = "css selector", value = 'h3.gs_rt')
-# titles <- unlist(lapply(title, function(x) {
-#     x$getElementText()
-# }))
-
 # Navigate to Google Scholar----
 remDr$navigate("https://scholar.google.com/")
 
-# Find and interact with elements on the page ----
+# Send keyword to search box | set year, get url ----
 search_box <-  remDr$findElement(using = "xpath", value = '//input[@name = "q"]')
+Sys.sleep(2)
 search_box$sendKeysToElement(list('fine tune llm', key='enter'))
+Sys.sleep(2)
 search_yr <- remDr$findElement(using = "css", value = ".gs_res_ab_dd_sec > a:nth-child(3)") # div.gs_res_ab_dd_sec > a:nth-child(2)
-url <- search_yr$getElementAttribute("href")
+url <- search_yr$getElementAttribute("href") # https://scholar.google.com/scholar? start=10 &q=fine+tune+llm&hl=en&as_sdt=0,5&as_ylo=2024
+url_base <- "https://scholar.google.com/scholar?start="
+url_tail <- "&q=fine+tune+llm&hl=en&as_sdt=0,5&as_ylo=2024"
 
-# base_url <- "https://scholar.google.com"
-# url <- paste0(base_url, url_sel)
-
+# Function to get title, abstract and pdf file ----
 get_titles <- function(url) {
     # Navigate to Google Scholar
-    Sys.sleep(5)
+    Sys.sleep(2)
     remDr$navigate(url)
-    
-    # Extract titles
-    title <- remDr$findElements(using = "css selector", value = 'h3.gs_rt')
-    titles <- unlist(lapply(title, function(x) {
+
+    # Extract elems
+    elem <- remDr$findElements(using = "css", value = 'h3.gs_rt')
+    titles <- unlist(lapply(elem, function(x) {
         x$getElementText()
     }))
 
@@ -48,44 +41,38 @@ get_pdf <- function(url) {
     Sys.sleep(5)
     remDr$navigate(url)
     
-    # Extract titles
-    doc <- remDr$findElements(using = "css selector", value = 'div.gs_ggsd a')
-    pdf <- unlist(lapply(doc, function(x) {
+    # Extract elems
+    elem <- remDr$findElements(using = "css selector", value = 'div.gs_ggsd a')
+    pdf <- unlist(lapply(elem, function(x) {
         x$getElementAttribute("href")
     }))
     
     return(pdf)
 }
 
-get_bib <- function(url) {
+get_abs <- function(url) {
     # Navigate to Google Scholar
     Sys.sleep(5)
     remDr$navigate(url)
     
-    # Extract bib
-    aut <- remDr$findElements(using = "css selector", value = 'div.gs_a a')
-    bib_aut <- lapply(aut, function(x) {
+    # Extract abstract
+    elem <- remDr$findElements(using = "css selector", value = 'div.gs_rs')
+    abs <- lapply(elem, function(x) {
         x$getElementText()
     })
-    
-    # Extract jrl
-    jrl <- remDr$findElements(using = "css selector", value = '#text')
-    bib_jrl <- unlist(lapply(jrl, function(x) {
-        x$getElementText()
-    }))
-    
-    bib <- bib_jrl
-    
-    return(bib)
+
+    return(abs)
 }
 
-# loop to get more titles ----
-i <- 0
+# get titles, pdf-link & abstract ----
+url <- paste0(url_base,x*10,url_tail)
 
-# url_next <- paste0("https://scholar.google.com/scholar?start=",i*10,"&q=fine+tuning+language+models&hl=en&as_sdt=0,5&as_ylo=2024")
-title_lst <- unlist(lapply(i[0:3], function(x) get_titles(url)))
-pdf_lst <- unlist(lapply(i[0:3], function(x) get_pdf(url)))
-bib_lst <- unlist(lapply(i[0:3], function(x) get_bib(url)))
+titles <- unlist(lapply(c(0:13), function(x) get_titles(paste0(url_base,x*10,url_tail))))
+pdf <- unlist(lapply(c(0:13), function(x) get_pdf(paste0(url_base,x*10,url_tail))))
+abstract <- unlist(lapply(c(0:13), function(x) get_abs(paste0(url_base,x*10,url_tail))))
 
 # save data ----
 save.image("harvest.RData")
+
+# save pdf link to pdf_link.txt ----
+writeLines(pdf,"pdf_link.csv")
