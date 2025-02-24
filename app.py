@@ -27,19 +27,36 @@ class DefChromaEF(Embeddings):
   def embed_query(self, query):
     return self.ef([query])[0]
 
+def extract_metadata(collection):
+       
+    # Get the first n embeddings from the collection
+    col = client.get_or_create_collection(collection)
+    
+    # Extract the text from the embeddings
+    # page = col.query(query_texts=["Abstract"])
+    page = col.get(ids=["0"])
+    return page["documents"][0][:577]
+    
 # %% app.ipynb 7
 # Get list of collections from ChromaDB
 client = chromadb.PersistentClient(path="../chromadb")
 collections = client.list_collections()
 pdf = [collection.name for collection in collections]
-
+qs = ["Summarize the text","What data analysis mentioned in the text",
+      "Give overview of the main findings", "Suggest a future research applies based on the text",
+      "What are the problem statements mentioned in the text?"]
 # %% app.ipynb 8
 st.title("Knowledge Base")
 
 # %% app.ipynb 10
 # Create a selectbox to choose a collection
+mt = ""
 selected_collection = st.sidebar.selectbox("Select a collection", pdf)
+selected_qs = st.sidebar.selectbox("Select a question", qs)
 st.write(selected_collection)
+mt = extract_metadata(selected_collection)
+st.write(mt,"...")
+
 # %% app.ipynb 12
 db = Chroma(client=client, collection_name=selected_collection, embedding_function=DefChromaEF(ef))
 retriever = db.as_retriever()
@@ -73,11 +90,12 @@ def ask_question(question):
     response_placeholder = st.empty()
     for r in rag_chain.stream(question):
         response += r.content
+        # response_placeholder.write(response)
     return response
 
 # %% app.ipynb 20
 if __name__ == "__main__":
-    user_question = st.text_input("Ask a question (or type 'quit' to exit): ")
+    user_question = st.text_input("Ask a question (or close tab to exit): ", value = selected_qs)
     if user_question.lower() == 'quit':
         exit()
     answer = st.write(ask_question(user_question))
