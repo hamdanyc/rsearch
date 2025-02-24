@@ -30,7 +30,7 @@ class DefChromaEF(Embeddings):
 # %% app.ipynb 7
 # Get list of collections from ChromaDB
 client = chromadb.PersistentClient(path="../chromadb")
-collections = client.list_collections(5)
+collections = client.list_collections()
 pdf = [collection.name for collection in collections]
 
 # %% app.ipynb 8
@@ -73,7 +73,6 @@ def ask_question(question):
     response_placeholder = st.empty()
     for r in rag_chain.stream(question):
         response += r.content
-        # response_placeholder.write(response)
     return response
 
 # %% app.ipynb 20
