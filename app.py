@@ -39,14 +39,26 @@ def extract_metadata(collection):
     
 # %% app.ipynb 7
 # Get list of collections from ChromaDB
-client = chromadb.PersistentClient(path="../chromadb")
-collections = client.list_collections()
+client = chromadb.PersistentClient(path="chromadb/")
+collection_names = client.list_collections()
+collections = [
+	client.get_collection(name=name, embedding_function=ef)
+	for name in collection_names
+]
 pdf = [collection.name for collection in collections]
-qs = ["Summarize the text","What data analysis mentioned in the text",
-      "Give overview of the main findings", "Suggest a future research applies based on the text",
-      "What are the problem statements mentioned in the text?"]
+qs = ["Summarize the text",
+      "Give the abstract from the article",
+      "What data analysis mentioned in the text",
+      "What has been studied on this topic?",
+      "What are the key findings and conclusions from the text", 
+      "Suggest a future research direction based on the text",
+      "What are the gaps in knowledge or inconsistencies in the text?",
+      "What are the problem statements mentioned in the text?",
+      "What are the limitations mentioned in the text?",
+      "Give theoretical research framework from the text",
+      "Highlight important previous studies that related to the text"]
 # %% app.ipynb 8
-st.title("Knowledge Base")
+st.title("Literature Review")
 
 # %% app.ipynb 10
 # Create a selectbox to choose a collection
